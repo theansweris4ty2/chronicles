@@ -31,7 +31,7 @@ proc drawBoard*(board: var seq[Tile]) =
     for tile in board: 
         drawPolyLines(Vector2(x: tile.center.x, y: tile.center.y), tile.sides, tile.radius, tile.rotation, tile.thickness, tile.color)
 
-proc update*(board: var seq[Tile]) = 
+proc update*(board: var seq[Tile], texture: Texture2D) = 
     var mousePosition = getMousePosition()
 
     if isMouseButtonDown(Left):
@@ -40,3 +40,4 @@ proc update*(board: var seq[Tile]) =
                 tile.color = Red
                 tile.thickness = 20
                 drawText($(tile.kind), 50'i32, 500'i32, 40'i32,  Black)
+                drawTexture(texture, 50, 600, White)
