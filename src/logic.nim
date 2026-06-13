@@ -1,4 +1,4 @@
-import naylib, entities
+import naylib, entities, strutils
 
 const screenWidth* = 1280
 const screenHeight* = 960
@@ -15,7 +15,7 @@ proc createBoard*(): seq[Tile] =
         k += 1
         center.x = (screenWidth/2 - tileRadius * 2) - ((i).float32 * tileRadius * 2)
         for j in 1..k:
-           board.add(Tile( center: Vector2(x: center.x + float32(j) * ((tileRadius - 7'f32) * 2) + float(i) * (tileRadius), y: center.y + float32(i) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black))
+           board.add(Tile( center: Vector2(x: center.x + float32(j) * ((tileRadius - 7'f32) * 2) + float(i) * (tileRadius), y: center.y + float32(i) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied: true, kind: Kind.military))
 
     center.y = 520
     k = 5
@@ -23,7 +23,7 @@ proc createBoard*(): seq[Tile] =
         k -= 1
         center.x = (screenWidth/2 - tileRadius) - ((h).float32 * tileRadius * 2) + 175
         for j in 0..k:
-            board.add(Tile(center: Vector2(x: center.x - float32(j) * ((tileRadius - 7'f32) * 2) + float(h) * (tileRadius), y: center.y + float32(h) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black))
+            board.add(Tile(center: Vector2(x: center.x - float32(j) * ((tileRadius - 7'f32) * 2) + float(h) * (tileRadius), y: center.y + float32(h) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied:false, kind: Kind.farm))
 
     return board
 
@@ -39,3 +39,4 @@ proc update*(board: var seq[Tile]) =
             if checkCollisionPointCircle(Vector2(x: mousePosition.x, y: mousePosition.y), Vector2(x: tile.center.x, y: tile.center.y), tile.radius):
                 tile.color = Red
                 tile.thickness = 20
+                drawText($(tile.kind), 50'i32, 500'i32, 40'i32,  Black)

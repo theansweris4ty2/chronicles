@@ -4,3 +4,6 @@ nimblecache/
 htmldocs/
 .nims
 .paths
+nimble.develop
+nimble.paths
+nimbledeps
