@@ -2,10 +2,10 @@ import naylib
 
 type
     TileKind* = enum 
-        farm
-        industry 
+        farm 
+        mine
+        forest
         military 
-        empty 
 
 
 type 
@@ -20,11 +20,20 @@ type
         case kind*: TileKind
         of farm:
             harvest: range[0 .. 5]
-        of industry:
-            production: range[0 .. 5]
+        of mine:
+            mining: range[0 .. 5]
         of military:
             recruitment: range[0 .. 5]
-        else:
-            discard
-        
+        of forest: 
+            logging: range[0 .. 5]
+
+type 
+    Player* = ref object
+        lumber*: int
+        ore*: int
+        wheat*: int
+        soldiers*: int
+        action1*: int
+        action2*: int
+        action3*: int
 

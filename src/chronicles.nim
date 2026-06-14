@@ -1,41 +1,26 @@
-import naylib, logic, std/random
+import naylib, logic, entities, std/random, strformat
 
 
 
 proc main() = 
   initWindow(screenWidth, screenHeight,  "Chronicles")
   setTargetFPS(60)
-  var index: seq[int] = @[0,0,0]
-  var board = createBoard()
-  var diceImages: array[6, Texture]
-  var buttons: array[4, Rectangle]
-  let button: Rectangle = Rectangle(x: 125'f32, y: 720'f32, width: 150'f32, height: 50'f32)
-  buttons[0] = button
-  var pip1 = loadImage("assets/pip1.png")
-  diceImages[0] = loadTextureFromImage(pip1)
-  var pip2 = loadImage("assets/pip2.png")
-  diceImages[1] = loadTextureFromImage(pip2)
-  var pip3= loadImage("assets/pip3.png")
-  diceImages[2] = loadTextureFromImage(pip3)
-  var pip4 = loadImage("assets/pip4.png")
-  diceImages[3] = loadTextureFromImage(pip4)
-  var pip5 = loadImage("assets/pip5.png")
-  diceImages[4] = loadTextureFromImage(pip5)
-  var pip6 = loadImage("assets/pip6.png")
-  diceImages[5] = loadTextureFromImage(pip6)
   randomize()
-
+  var index: seq[int] = @[0,0,0]
+  var (board, buttons) = createBoard()
+  let diceImages = loadMapImages()
+  var player: Player = Player(lumber: 0, ore: 0,wheat: 0,soldiers: 0, action1: 0, action2: 0, action3: 0)
+ 
 
   while not windowShouldClose():
     beginDrawing()
-    clearBackground(Beige)
-    drawRectangle(button, Blue)
-    drawText("Roll", button.x.int32 + 40'i32, button.y.int32 + 10'i32, 40'i32, Black)
-    update(board, diceImages, index, buttons)
+    clearBackground(White)
+    update(board, diceImages, index, buttons, player)
     drawBoard(board)
     endDrawing()
   closeWindow()
 
+  echo &" {player.action1} \n {player.action2} \n {player.action3}"
   
 
 

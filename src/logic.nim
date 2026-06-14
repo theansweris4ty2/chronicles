@@ -4,6 +4,23 @@ const screenWidth* = 1280
 const screenHeight* = 960
 const tileRadius*: float32 = 50
 
+proc loadMapImages*(): array[6, Texture] =
+    var diceImages: array[6, Texture]
+    let pip1 = loadImage("assets/pip1.png")
+    diceImages[0] = loadTextureFromImage(pip1)
+    let pip2 = loadImage("assets/pip2.png")
+    diceImages[1] = loadTextureFromImage(pip2)
+    let pip3= loadImage("assets/pip3.png")
+    diceImages[2] = loadTextureFromImage(pip3)
+    let pip4 = loadImage("assets/pip4.png")
+    diceImages[3] = loadTextureFromImage(pip4)
+    let pip5 = loadImage("assets/pip5.png")
+    diceImages[4] = loadTextureFromImage(pip5)
+    let pip6 = loadImage("assets/pip6.png")
+    diceImages[5] = loadTextureFromImage(pip6)
+
+    return diceImages
+
 
 proc diceRoll(): int = 
     var image: Texture
@@ -26,10 +43,13 @@ proc diceRoll(): int =
         
     drawTexture(image, Vector2(x: 100, y: 600), White)
 
-proc createBoard*(): seq[Tile] = 
+proc createBoard*(): (seq[Tile], array[4, Rectangle]) = 
 
     var board: seq[Tile] = @[]
     var tileType: int
+    var buttons: array[4, Rectangle]
+    let button: Rectangle = Rectangle(x: 125'f32, y: 720'f32, width: 150'f32, height: 50'f32)
+    buttons[0] = button
 
     var center = Vector2(x: screenWidth/2.float32, y: 100)
     var k: int = 0
@@ -48,17 +68,18 @@ proc createBoard*(): seq[Tile] =
         k -= 1
         center.x = (screenWidth/2 - tileRadius) - ((h).float32 * tileRadius * 2) + 175
         for j in 0..k:
+            tileType = rand(3)
             board.add(Tile(center: Vector2(x: center.x - float32(j) * ((tileRadius - 7'f32) * 2) + float(h) * (tileRadius), y: center.y + float32(h) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied:false, kind: TileKind(tileType)))
 
-    return board
+    return (board, buttons)
 
 proc drawBoard*(board: var seq[Tile]) = 
     for tile in board: 
         drawPolyLines(Vector2(x: tile.center.x, y: tile.center.y), tile.sides, tile.radius, tile.rotation, tile.thickness, tile.color)
 
-proc update*(board: var seq[Tile], images: array[6, Texture], index: var seq[int], buttons: array[4, Rectangle]) = 
+proc update*(board: var seq[Tile], images: array[6, Texture], index: var seq[int], buttons: array[4, Rectangle], player: Player) = 
     
-
+    
     var mousePosition = getMousePosition()
 
     if isMouseButtonDown(Left):
@@ -73,7 +94,11 @@ proc update*(board: var seq[Tile], images: array[6, Texture], index: var seq[int
                 index[0] = diceRoll()
                 index[1] = diceRoll()
                 index[2] = diceRoll()
-                
+                player.action1 = index[0] + 1
+                player.action2 = index[1] + 1
+                player.action3 = index[2] + 1
+    drawRectangle(buttons[0], Blue)    
+    drawText("Roll", buttons[0].x.int32 + 40'i32, buttons[0].y.int32 + 10'i32, 40'i32, Black)        
     drawTexture(images[index[0]], Vector2(x: 50, y: 600), White)
     drawTexture(images[index[1]], Vector2(x: 150, y: 600), White)
     drawTexture(images[index[2]], Vector2(x: 250, y: 600), White)
