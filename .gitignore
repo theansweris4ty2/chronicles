@@ -1,8 +1,11 @@
-.exe
+*.exe
 nimcache/
 nimblecache/
 htmldocs/
-.nims
+*.nims
+*.develop
+*.paths
+configs.nim
+nimbledeps
 nimble.develop
 nimble.paths
-nimbledeps

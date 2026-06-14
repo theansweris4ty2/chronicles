@@ -1,15 +1,15 @@
 import naylib
 
 type
-    Kind* = enum 
-        farm = "Farm"
-        industry = "Industry"
-        military = "Military"
-        empty = "Empty"
+    TileKind* = enum 
+        farm
+        industry 
+        military 
+        empty 
 
 
 type 
-    Tile* = object
+    Tile* = ref object
         center*: Vector2
         sides*: int32
         radius*: float32
@@ -17,5 +17,14 @@ type
         thickness*: float32
         color*: Color
         occupied*: bool
-        kind*: Kind
+        case kind*: TileKind
+        of farm:
+            harvest: range[0 .. 5]
+        of industry:
+            production: range[0 .. 5]
+        of military:
+            recruitment: range[0 .. 5]
+        else:
+            discard
         
+

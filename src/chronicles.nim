@@ -5,11 +5,11 @@ import naylib, logic, std/random
 proc main() = 
   initWindow(screenWidth, screenHeight,  "Chronicles")
   setTargetFPS(60)
-  var index: int
+  var index: seq[int] = @[0,0,0]
   var board = createBoard()
   var diceImages: array[6, Texture]
   var buttons: array[4, Rectangle]
-  let button: Rectangle = Rectangle(x: 75'f32, y: 720'f32, width: 150'f32, height: 50'f32)
+  let button: Rectangle = Rectangle(x: 125'f32, y: 720'f32, width: 150'f32, height: 50'f32)
   buttons[0] = button
   var pip1 = loadImage("assets/pip1.png")
   diceImages[0] = loadTextureFromImage(pip1)
@@ -35,6 +35,8 @@ proc main() =
     drawBoard(board)
     endDrawing()
   closeWindow()
+
+  
 
 
 main()
