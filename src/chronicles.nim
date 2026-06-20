@@ -10,6 +10,7 @@ proc main() =
   var (board, buttons) = createBoard()
   let diceImages = loadMapImages()
   var player: Player = Player(lumber: 0, ore: 0,wheat: 0,soldiers: 0, action1: 0, action2: 0, action3: 0)
+  
  
 
   while not windowShouldClose():

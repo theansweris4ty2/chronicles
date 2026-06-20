@@ -1,4 +1,4 @@
-import naylib, entities, std/random
+import naylib, entities, std/[random, strutils]
 
 const screenWidth* = 1280
 const screenHeight* = 960
@@ -23,28 +23,12 @@ proc loadMapImages*(): array[6, Texture] =
 
 
 proc diceRoll(): int = 
-    var image: Texture
-    let roll = rand(1..6)
-    case roll:
-    of 1: 
-        return 0
-    of 2: 
-        return 1
-    of 3:
-        return 2
-    of 4:
-        return 3
-    of 5:
-        return 4
-    of 6: 
-        return 5
-    else:
-        discard
+    let roll = rand(0..5)
+    return roll
         
-    drawTexture(image, Vector2(x: 100, y: 600), White)
+   
 
 proc createBoard*(): (seq[Tile], array[4, Rectangle]) = 
-
     var board: seq[Tile] = @[]
     var tileType: int
     var buttons: array[4, Rectangle]
@@ -59,7 +43,7 @@ proc createBoard*(): (seq[Tile], array[4, Rectangle]) =
         center.x = (screenWidth/2 - tileRadius * 2) - ((i).float32 * tileRadius * 2)
         for j in 1..k:
            tileType = rand(3) 
-           board.add(Tile( center: Vector2(x: center.x + float32(j) * ((tileRadius - 7'f32) * 2) + float(i) * (tileRadius), y: center.y + float32(i) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied: true, kind: TileKind(tileType)))
+           board.add(Tile( center: Vector2(x: center.x + float32(j) * ((tileRadius - 7'f32) * 2) + float(i) * (tileRadius), y: center.y + float32(i) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied: false, kind: TileKind(tileType)))
            
 
     center.y = 520
@@ -70,7 +54,16 @@ proc createBoard*(): (seq[Tile], array[4, Rectangle]) =
         for j in 0..k:
             tileType = rand(3)
             board.add(Tile(center: Vector2(x: center.x - float32(j) * ((tileRadius - 7'f32) * 2) + float(h) * (tileRadius), y: center.y + float32(h) * (tileRadius + 20'f32)), sides: 6'i32, radius: tileRadius, rotation: 90'f32, thickness: 5'f32, color: Black, occupied:false, kind: TileKind(tileType)))
-
+    for tile in board:
+         case tile.kind:
+                of farm:
+                    tile.production = rand(Tile.harvest) + 1
+                of mine:
+                    tile.production = rand(Tile.mining) + 1
+                of military:
+                    tile.production = rand(Tile.recruitment) + 1
+                of forest:
+                    tile.production = rand(Tile.logging) + 1
     return (board, buttons)
 
 proc drawBoard*(board: var seq[Tile]) = 
@@ -79,18 +72,23 @@ proc drawBoard*(board: var seq[Tile]) =
 
 proc update*(board: var seq[Tile], images: array[6, Texture], index: var seq[int], buttons: array[4, Rectangle], player: Player) = 
     
-    
     var mousePosition = getMousePosition()
 
-    if isMouseButtonDown(Left):
+    if isMouseButtonPressed(Left):
         for tile in mitems(board):
-            if checkCollisionPointCircle(Vector2(x: mousePosition.x, y: mousePosition.y), Vector2(x: tile.center.x, y: tile.center.y), tile.radius):
+            if checkCollisionPointCircle(Vector2(x: mousePosition.x, y: mousePosition.y), Vector2(x: tile.center.x, y: tile.center.y), tile.radius) and player.action1 > 0:
                 tile.color = Red
                 tile.thickness = 20
+                player.action1 -= 1
+    if isMouseButtonDown(Right):
+        for tile in mitems(board):
+            if checkCollisionPointCircle(Vector2(x: mousePosition.x, y: mousePosition.y), Vector2(x: tile.center.x, y: tile.center.y), tile.radius):
                 drawText($(tile.kind), 50'i32, 500'i32, 40'i32,  Black)
+                drawText($(tile.production), 50'i32, 550'i32, 40'i32, Black)
+
     if isMouseButtonPressed(Left):
         for button in buttons:
-            if checkCollisionRecs(button, Rectangle(x: mousePosition.x, y: mousePosition.y, width: 10, height: 10)):
+            if checkCollisionRecs(button, Rectangle(x: mousePosition.x, y: mousePosition.y, width: 10, height: 10)) and player.action1 == 0:
                 index[0] = diceRoll()
                 index[1] = diceRoll()
                 index[2] = diceRoll()

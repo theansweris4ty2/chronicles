@@ -17,6 +17,7 @@ type
         thickness*: float32
         color*: Color
         occupied*: bool
+        production*: int
         case kind*: TileKind
         of farm:
             harvest: range[0 .. 5]
